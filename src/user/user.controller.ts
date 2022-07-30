@@ -13,5 +13,8 @@ export class UserController {
     return this.userService.onCreateUser(createUserDto);
   }
 
-  
+  @Get('/:id')
+  getUserById(@Param('id') id:number): Promise<User>{
+    return this.userService.getUserById(id);
+  }
 }

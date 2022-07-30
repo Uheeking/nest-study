@@ -1,10 +1,10 @@
-import { CreateUserDto } from 'src/user/dto/user.dto';
+import { CreateUserDto } from '../user/dto/user.dto';
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-    async onCreate(createUserDto: CreateUserDto): Promise<boolean> {
+    async onCreate(createUserDto: CreateUserDto): Promise<User> {
         const { user_id, password, name, email } = createUserDto;
     
         const user = this.create({
@@ -14,7 +14,8 @@ export class UserRepository extends Repository<User> {
             email
         })
     
-        return user ? true : false;
+        await this.save(user);
+        return user;
       }
 
 }
