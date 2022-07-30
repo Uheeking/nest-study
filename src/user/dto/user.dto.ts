@@ -1,7 +1,8 @@
 import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateUserDto {
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
     user_id: string; // 유저 고유 아이디
 
@@ -27,4 +28,7 @@ export class CreateUserDto {
     email: string; //유저 이메일
   }
   
-  export class UpdateUserDto {}
+  export class UpdateUserDto extends PartialType(CreateUserDto) {
+    @IsNumber()
+    id: number;
+  }

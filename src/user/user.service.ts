@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { User } from '../entity/user.entity';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from '../repository/user.repository';
 
@@ -15,25 +15,71 @@ export class UserService {constructor(
   //   { id: 3, name: '유저3' },
   // ];
 
-  onCreateUser(createUserDto: CreateUserDto): Promise<User> {
+  getHelloWorld(): string {
+    return 'Hello World!!';
+  }
+
+  onCreateUser(createUserDto: CreateUserDto): Promise<boolean> {
     return this.userRepository.onCreate(createUserDto);
   }
 
-  async getUserById(id:number, req:Request):Promise<User>{
-    const found = await this.userRepository.findOne({
-      where:{id:parseInt(req.params.id,10)}
-    });
-
-    if(!found){
-      throw new NotFoundException(`Cant find User with id ${id}`)
-    }
-    return found
+  /**
+   * @author Ryan
+   * @description 모든 유저 조회
+   *
+   * @returns {User[]} users
+   */
+  getUserAll(): Promise<User[]> {
+    return this.userRepository.findAll();
   }
 
-  async deleteUser(id:number): Promise<void>{
-    const result = await this.userRepository.delete(id);
-    console.log('result',result);
-    
+  /**
+   * @author Ryan
+   * @description 단일 유저 조회
+   *
+   * @param id 유저 고유 아이디
+   * @returns {User} users
+   */
+  findByUserOne(id: number): Promise<User> {
+    return this.userRepository.findById(id);
   }
+
+  /**
+   * @author Ryan
+   * @description 단일 유저 수정
+   *
+   * @param id 유저 고유 아이디
+   * @param updateUserDto 유저 정보
+   *
+   * @returns {Promise<boolean>} true
+   */
+  setUser(id: number, updateUserDto: UpdateUserDto): Promise<boolean> {
+    return this.userRepository.onChangeUser(id, updateUserDto);
+  }
+
+  /**
+   * @author Ryan
+   * @description 전체 유저 수정
+   *
+   * @param updateUserDto 유저 정보
+   *
+   * @returns {Promise<boolean>} true
+   */
+  setAllUser(updateUserDto: UpdateUserDto[]): Promise<boolean> {
+    return this.userRepository.onChangeUsers(updateUserDto);
+  }
+
+  /**
+   * @author Ryan
+   * @description 유저 삭제
+   *
+   * @param id
+   * @returns {Promise<boolean>} true
+   */
+  deleteUser(id: number): Promise<boolean> {
+    return this.userRepository.onDelete(id);
+  }
+
+  
   
 }
